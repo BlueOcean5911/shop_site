@@ -1,3 +1,5 @@
+import { Dialog, Transition } from '@headlessui/react'
+import { Fragment, useState } from 'react'
 import { Logo } from '@pmndrs/branding'
 import { motion, AnimatePresence } from 'framer-motion'
 import { AiFillCamera, AiOutlineArrowLeft, AiOutlineHighlight, AiOutlineShopping } from 'react-icons/ai'
@@ -6,8 +8,11 @@ import { state } from './store'
 import MinusIconButton from './components/button/minus.icon'
 import PlusIconButton from './components/button/plus.icon'
 import ScrollButton from './components/button/scroll.button'
+import ColorPicker from 'react-pick-color';
+
 
 export function Overlay() {
+  
   const snap = useSnapshot(state)
   const transition = { type: 'spring', duration: 0.8 }
   const config = {
@@ -73,14 +78,23 @@ export function Overlay() {
 
 function Customizer() {
   const snap = useSnapshot(state)
-  
+  const [isOpen, setIsOpen] = useState(false);
+
+  function closeModal() {
+    setIsOpen(false)
+  }
+
+  function openModal() {
+    setIsOpen(true)
+  }
+
   const handleLogoPosition = (value) => {
     state.logo.position[0] += value[0];
     state.logo.position[1] += value[1];
     state.logo.position[2] += value[2];
     console.log(state.logo.position)
   }
-  
+
   const handleTextPosition = (value) => {
     state.text.position[0] += value[0];
     state.text.position[1] += value[1];
@@ -101,10 +115,13 @@ function Customizer() {
           <div className='flex flex-col gap-4 p-2 border-2 border-gray-100 rounded-md shadow-lg'>
             <div className='flex flex-col'>
               <div className='text text-sm'>Text</div>
-              <input 
-                defaultValue={snap.text.content}
-                onChange={(e) => state.text.content = e.target.value}
-                id='text' className='outline-none border-2 border-gray-100 rounded-md text-sm p-1' />
+              <div className='flex gap-2 items-center'>
+                <input
+                  defaultValue={snap.text.content}
+                  onChange={(e) => state.text.content = e.target.value}
+                  id='text' className='outline-none border-2 border-gray-100 rounded-md text-sm p-1' />
+                <div className='w-8 h-8  rounded-md text-sm border-4 hover:border-gray-500 hover:cursor-pointer' style={{ backgroundColor: snap.text.font.color }} onClick={() => openModal()}></div>
+              </div>
             </div>
             <div className='flex gap-4'>
               <div className='flex flex-col gap-2'>
@@ -168,6 +185,56 @@ function Customizer() {
         GO BACK
         <AiOutlineArrowLeft size="1.3em" />
       </button>
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black/25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-fit transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-xl font-medium leading-6 text-gray-900"
+                  >
+                    Please choose your color
+                  </Dialog.Title>
+                  <div className='flex flex-col items-center my-8'>
+                  <ColorPicker color={snap.text.font.color} onChange={color => state.text.font.color = color.hex ? color.hex : color} />
+                  </div>
+                  <div className="mt-4">
+                    <button
+                      type="button"
+                      className="inline-flex float-right justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      onClick={closeModal}
+                    >
+                      Get back
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
     </div>
   )
 }

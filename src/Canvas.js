@@ -48,9 +48,11 @@ function Shirt(props) {
   const generateTextTexture = (text) => {
     // Use canvas to generate an image with the desired text
     const canvas = document.createElement('canvas');
+    canvas.height = 50;
+    canvas.width = 100;
     const context = canvas.getContext('2d');
     context.font = `${snap.text.font.size}px ${snap.text.font.family}`;
-    context.fillStyle = snap.text.color;
+    context.fillStyle = snap.text.font.color;
     context.fillText(snap.text.content, 10, 50);
 
     // Create a texture from the canvas
