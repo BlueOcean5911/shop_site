@@ -2,22 +2,22 @@ import { proxy } from 'valtio'
 
 const state = proxy({
   intro: true,
-  colors: ['#ccc', '#EFBD4E', '#80C670', '#726DE8', '#EF674E', '#353934'],
+  colors: ['#ccc', '#EFBD4E', '#80C670', '#726DE8', '#EF674E', '#353934', '#eeeeee'],
   decals: ['react', 'three2', 'pmndrs'],
   color: '#EFBD4E',
   decal: 'three2',
   logo: {
     position: [0.07, 0.08, 0.11],
-    scale: 0.05,
+    scale: 0.05
   },
   text: {
     position: [0.08, 0.16, 0.09],
     scale: 0.1,
-    content: "Hello world!",
+    content: 'Hello world!',
     font: {
       family: 'Arial',
       color: 'black',
-      size: '12',
+      size: '12'
     }
   }
 })
